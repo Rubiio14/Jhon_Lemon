@@ -8,12 +8,21 @@ public class Observer : MonoBehaviour
     public GameEnding gameEnding;
 
     bool m_IsPlayerInRange;
-    
 
+    float m_Timer = 0f;
+    public AudioSource m_Tindeck;
+    [SerializeField]
+    public GameObject m_Exclamation;
+
+    void Start()
+    {
+        m_Exclamation.SetActive(false);
+    }
     void OnTriggerEnter (Collider other)
     {
 		if(other.transform == player)
         {
+            m_Tindeck.Play();
             m_IsPlayerInRange = true;
         }
     }
@@ -21,6 +30,8 @@ public class Observer : MonoBehaviour
     {
         if(other.transform == player)
         {
+            m_Exclamation.SetActive(false);
+            m_Timer = 0f;
             m_IsPlayerInRange = false;
         }
     }
@@ -34,9 +45,18 @@ public class Observer : MonoBehaviour
             RaycastHit raycastHit;
             if(Physics.Raycast(ray, out raycastHit))
             {
+                
+                
                 if (raycastHit.collider.transform == player)
                 {
-                    gameEnding.CaughtPlayer();
+                    m_Timer += Time.deltaTime;
+                    m_Exclamation.SetActive(true);
+
+                    if (m_Timer >= 2)
+                    {
+                        gameEnding.CaughtPlayer();
+                    }
+                    
                 }
             }
         }
